@@ -30,13 +30,3 @@ def get_model_test(storage):
 
 def update_q_score_test(storage):
     pass
-
-# So let me make a list of the methods that I need to test
-# Storage - store_checkpoint, update_checkpoint, update_checkpoint_score, sample_past_model, get_model
-# Checkpoint - get_model, update_q_score
-# def test_list():
-#     store_checkpoint_test(storage)
-#     update_checkpoint_score_test(storage)
-#     sample_past_model_test(storage)
-#     get_model_test(storage)
-#     update_q_score_test(storage)

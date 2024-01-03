@@ -4,7 +4,6 @@ from Simulator.champion import champion
 from Simulator import champion as c_object
 from Simulator.item_stats import trait_items, starting_items
 from Simulator.origin_class_stats import origin_class
-import pytest
 
 def create_player(player_num=0) -> Player:
     """Creates fresh player and pool"""

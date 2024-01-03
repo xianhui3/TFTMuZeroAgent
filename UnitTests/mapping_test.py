@@ -4,7 +4,7 @@ def setup():
     default_mapping = utils.create_default_mapping()
     return default_mapping
 
-def mapping_test():
+def test_mapping():
     default_mapping = setup()
 
     for dim in range(len(default_mapping)):
@@ -40,6 +40,3 @@ def mapping_test():
             for sell_action in local_mapping:
                 mapped_idx = int(sell_action[1:])  # "_15" -> "15"
                 assert sell_action == local_mapping[mapped_idx]
-
-def test_list():
-    mapping_test()
