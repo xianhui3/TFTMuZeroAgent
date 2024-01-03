@@ -21,81 +21,73 @@ CORRECT_DROP_RATES = [
     [0.15, 0.20, 0.35, 0.25, 0.05],
     [0.10, 0.15, 0.30, 0.30, 0.15],
 ]
-
-
-def verifyShopDropRate():
-    # Create a player and pool
+#Correct chosen drop rates of each cost by level for set 4
+#TODO: Test if chosen drop rates are correct
+CHOSEN_DROP_RATES = [
+    [1   , 0   , 0   , 0   , 0   ],
+    [1   , 0   , 0   , 0   , 0   ],
+    [1   , 0   , 0   , 0   , 0   ],
+    [0.8 , 0.2 , 0   , 0   , 0   ],
+    [0.4 , 0.55, 0.05, 0   , 0   ],
+    [0   , 0.6 , 0.4 , 0   , 0   ],
+    [0   , 0.4 , 0.58, 0.02, 0   ],
+    [0   , 0   , 0.6 , 0.4 , 0   ],
+    [0   , 0   , 0   , 0.6 , 0.4 ]
+]
+def setup_function():
+    global pool1
+    global player1
     pool1 = pool()
     player1 = Player(pool_pointer=pool1, player_num=1)
 
-    # loop through 9 player levels
-    for level in range(1, 10):
-        player1.level = level
-        costs = verify(pool1, player1)
+#Can potentially consolidate tests
+def test_level_one():
+    level_test(1)   
 
-        # what is the percentage of each cost chosen?
-        print("Player level: " + str(level))
+def test_level_two():
+    level_test(2)
 
-        total_1_cost = 0
-        total_2_cost = 0
-        total_3_cost = 0
-        total_4_cost = 0
-        total_5_cost = 0
+def test_level_three():
+    level_test(3)
 
-        # loop though each cost 1 champion
-        for i in range(len(costs[0])):
-            print(str(list(costs[0])[i]) + ": " + str(costs[0][list(costs[0])[i]] / 100000))
-            total_1_cost += costs[0][list(costs[0])[i]]
+def test_level_four():
+    level_test(4)
 
-        # loop though each cost 2 champion
-        for i in range(len(costs[1])):
-            print(str(list(costs[1])[i]) + ": " + str(costs[1][list(costs[1])[i]] / 100000))
-            total_2_cost += costs[1][list(costs[1])[i]]
+def test_level_five():
+    level_test(5)
 
-        # loop though each cost 3 champion
-        for i in range(len(costs[2])):
-            print(str(list(costs[2])[i]) + ": " + str(costs[2][list(costs[2])[i]] / 100000))
-            total_3_cost += costs[2][list(costs[2])[i]]
+def test_level_six():
+    level_test(6)
 
-        # loop though each cost 4 champion
-        for i in range(len(costs[3])):
-            print(str(list(costs[3])[i]) + ": " + str(costs[3][list(costs[3])[i]] / 100000))
-            total_4_cost += costs[3][list(costs[3])[i]]
+def test_level_seven():
+    level_test(7)
 
-        # loop though each cost 5 champion
-        for i in range(len(costs[4])):
-            print(str(list(costs[4])[i]) + ": " + str(costs[4][list(costs[4])[i]] / 100000))
-            total_5_cost += costs[4][list(costs[4])[i]]
+def test_level_eight():
+    level_test(8)
 
-        # need to add proper statistical one way ANOVA to be extra sure, right now error is arbitrary (variance of 1%)
-        assert (CORRECT_DROP_RATES[level - 1][0] - 0.01) <= total_1_cost / 100000 <= (
-                    CORRECT_DROP_RATES[level - 1][0] + 0.01), \
-            f"1 Cost Champion drop rate at level {level} is significantly incorrect! Control: " \
-            f"{CORRECT_DROP_RATES[level - 1][0]} Sample: {total_1_cost / 100000}"
+def test_level_nine():
+    level_test(9)
 
-        assert (CORRECT_DROP_RATES[level - 1][1] - 0.01) <= total_2_cost / 100000 <= (
-                    CORRECT_DROP_RATES[level - 1][1] + 0.01), \
-            f"2 Cost Champion drop rate at level {level} is significantly incorrect! Control: " \
-            f"{CORRECT_DROP_RATES[level - 1][1]} Sample: {total_2_cost / 100000}"
+#Checks if the cost drop rates are correct at a certain level
+def level_test(level_to_test):
+    cost_checker(1, level_to_test)
+    cost_checker(2, level_to_test)
+    cost_checker(3, level_to_test)
+    cost_checker(4, level_to_test)
+    cost_checker(5, level_to_test)
 
-        assert (CORRECT_DROP_RATES[level - 1][2] - 0.01) <= total_3_cost / 100000 <= (
-                    CORRECT_DROP_RATES[level - 1][2] + 0.01), \
-            f"3 Cost Champion drop rate at level {level} is significantly incorrect! Control: " \
-            f"{CORRECT_DROP_RATES[level - 1][2]} Sample: {total_3_cost / 100000}"
-
-        assert (CORRECT_DROP_RATES[level - 1][3] - 0.01) <= total_4_cost / 100000 <= (
-                    CORRECT_DROP_RATES[level - 1][3] + 0.01), \
-            f"4 Cost Champion drop rate at level {level} is significantly incorrect! Control: " \
-            f"{CORRECT_DROP_RATES[level - 1][3]} Sample: {total_4_cost / 100000}"
-
-        assert (CORRECT_DROP_RATES[level - 1][4] - 0.01) <= total_5_cost / 100000 <= (
-                    CORRECT_DROP_RATES[level - 1][4] + 0.01), \
-            f"5 Cost Champion drop rate at level {level} is significantly incorrect! Control: " \
-            f"{CORRECT_DROP_RATES[level - 1][4]} Sample: {total_5_cost / 100000}"
-
-        print("Total percent (should be 1.0 or very close)  : " + str(
-            (total_1_cost + total_2_cost + total_3_cost + total_4_cost + total_5_cost) / 100000))
-
+#Tests a certain cost's drop rates are correct at a certain level
+def cost_checker(cost_num, player_level):
+    player1.level = player_level
+    costs = verify(pool1, player1)
+    total_costs = 0
+    for i in range(len(costs[cost_num - 1])):
+        total_costs += costs[cost_num - 1][list(costs[cost_num - 1])[i]]
+    
+    assert (CORRECT_DROP_RATES[player_level - 1][cost_num-1] - 0.01) <= total_costs / 100000 <= (
+                    CORRECT_DROP_RATES[player_level - 1][cost_num-1] + 0.01), \
+            f"{cost_num} Cost Champion drop rate at level {player_level} is significantly incorrect! Control: " \
+            f"{CORRECT_DROP_RATES[player_level - 1][cost_num-1]} Sample: {total_costs / 100000}"
 
 def verify(_pool, _player):
     shop = pool.sample(self=_pool, player=_player, num=100000, idx=-1)
@@ -138,7 +130,3 @@ def verify(_pool, _player):
             pass
 
     return cost_1, cost_2, cost_3, cost_4, cost_5
-
-
-def test_list():
-    verifyShopDropRate()
