@@ -47,7 +47,7 @@ def setup():
 
 
 # test to make sure invalid actions are masked out during encoding
-def encodeTest():
+def test_encoding():
     # Set up the test with base settings
     tft_env, mcts_obj = setup()
     player1 = tft_env.PLAYERS["player_1"]
@@ -156,10 +156,5 @@ def encodeTest():
 
 
 # make sure default mapping doesn't have invalid actions
-def defaultMappingTest():
+def test_default_mapping():
     pass
-
-
-def test_list():
-    encodeTest()
-    defaultMappingTest()
