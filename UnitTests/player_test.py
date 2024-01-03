@@ -4,17 +4,17 @@ from Simulator.champion import champion
 from Simulator import champion as c_object
 from Simulator.item_stats import trait_items, starting_items
 from Simulator.origin_class_stats import origin_class
+import pytest
 
-
-def setup(player_num=0) -> Player:
+def create_player(player_num=0) -> Player:
     """Creates fresh player and pool"""
     base_pool = pool()
     player1 = Player(base_pool, player_num)
     return player1
 
 
-def azir_test():
-    p1 = setup()
+def test_azir():
+    p1 = create_player()
     p1.gold = 1000
     p1.max_units = 4
     p1.buy_champion(champion('azir'))
@@ -41,23 +41,23 @@ def azir_test():
             assert p1.board[x][y] is None
 
 
-def chosen_test():
-    p1 = setup()
+def test_chosen():
+    p1 = create_player()
     p1.gold = 1000
     p1.max_units = 4
     p1.buy_champion(champion('leesin', chosen='duelist'))
     assert p1.chosen == 'duelist'
     p1.move_bench_to_board(0, 0, 0)
     assert p1.team_tiers['duelist'] == 1
-    p2 = setup()
+    p2 = create_player()
     p2.gold = 1000
     p2.max_units = 4
     p1.buy_champion(champion('leesin'))
     p1.buy_champion(champion('leesin'))
     assert p1.board[0][0].chosen == 'duelist'
 
-def end_of_turn_actions_test():
-    p1 = setup()
+def test_end_of_turn_actions():
+    p1 = create_player()
     p1.gold = 1000
     p1.max_units = 3
     for _ in range(8):
@@ -72,8 +72,8 @@ def end_of_turn_actions_test():
     assert p1.bench[2] is not None
     assert p1.team_tiers['duelist'] == 1
 
-def championDuplicatorTest():
-    p1 = setup()
+def test_champion_duplicator():
+    p1 = create_player()
     p1.gold = 1000
     p1. max_units = 10
     p1.buy_champion(champion('leesin'))
@@ -105,8 +105,8 @@ def championDuplicatorTest():
         p1.sell_from_bench(x)
         assert p1.bench[x] is None
 
-def magneticRemoverTest():
-    p1 = setup()
+def test_magnetic_remover():
+    p1 = create_player()
     p1.gold = 1000
     p1.max_units = 10
     p1.buy_champion(champion('leesin'))
@@ -128,8 +128,8 @@ def magneticRemoverTest():
     assert p1.board[0][0].items == []
     assert p1.bench[1].items == []
 
-def reforgerTest():
-    p1 = setup()
+def test_reforger():
+    p1 = create_player()
     p1.gold = 1000
     p1.max_units = 10
     for x in range(3):
@@ -173,11 +173,11 @@ def reforgerTest():
     assert test3
     assert test4
 
-def thiefsGloveCombatTest():
-    p1 = setup()
+def test_thiefs_gloves_combat():
+    p1 = create_player()
     p1.gold = 1000
     p1.max_units = 1
-    p2 = setup()
+    p2 = create_player()
     p2.gold = 1000
     p2.max_units = 1
     p1.buy_champion(champion('nami'))
@@ -194,8 +194,8 @@ def thiefsGloveCombatTest():
     c_object.run(c_object.champion, p1, p2)
     assert p1.board[0][0].items[0] == 'thieves_gloves'
 
-def thiefsGlovesTest():
-    p1 = setup()
+def test_thiefs_gloves():
+    p1 = create_player()
     p1.gold = 1000
     p1.max_units = 1
     p1.buy_champion(champion('azir'))
@@ -215,9 +215,9 @@ def thiefsGlovesTest():
     p1.move_item(0, 0, -1)
     p1.start_round(5)
 
-def kaynTests():
-    p1 = setup()
-    p2 = setup(1)
+def test_kayn():
+    p1 = create_player()
+    p2 = create_player(1)
     p1.gold = 500
     p2.gold = 500
     p1.max_units = 10
@@ -250,9 +250,9 @@ def kaynTests():
     for x in range(10):
         assert not p1.item_bench[x]
 
-def level2Champion():
+def test_level_two_champion():
     """Creates 3 Zileans, there should be 1 2* Zilean on bench"""
-    p1 = setup()
+    p1 = create_player()
     p1.gold = 100000
     p1.max_units = 10
     for x in range(3):
@@ -265,9 +265,9 @@ def level2Champion():
             assert y is None, "the board should be empty"
 
 
-def level3Champion():
+def test_level_three_champion():
     """Creates 9 Zileans, there should be 1 3* Zilean on bench"""
-    p1 = setup()
+    p1 = create_player()
     p1.gold = 100000
     p1.max_units = 1000
     for x in range(3):
@@ -286,9 +286,9 @@ def level3Champion():
             assert y is None, "the board should be empty"
 
 
-def levelChampFromField():
+def test_level_champion_from_field():
     """buy third copy while 1 copy on field"""
-    p1 = setup()
+    p1 = create_player()
     p1.gold = 100000
     p1.max_units = 1000
     p1.buy_champion(champion("zilean"))
@@ -303,8 +303,8 @@ def levelChampFromField():
 # Please expand on this test or add additional tests here.
 # I am sure there are some bugs with the level cutoffs for example
 # Like I do not think I am hitting level 3 on the correct round without buying any exp
-def buyExp():
-    p1 = setup()
+def test_exp_buy():
+    p1 = create_player()
     p1.level_up()
     lvl = p1.level
     while p1.level < p1.max_level:
@@ -313,36 +313,35 @@ def buyExp():
         lvl += 1
         assert lvl == p1.level
 
-
-def spamExp():
+def test_max_exp():
     """buys tons of experience"""
-    p1 = setup()
+    p1 = create_player()
     p1.gold = 100000
     for _ in range(1000):
         p1.buy_exp()
     assert p1.level == p1.max_level, "I should be max level"
     assert p1.exp == 0, "I should not have been able to buy experience after hitting max lvl"
 
-
-def incomeTest1():
+# Problem: Interest gets calculated after base income is added <- unknown if problem persists
+def test_gold_income():
     """first test for gold income"""
-    p1 = setup()
+    p1 = create_player()
     p1.gold = 15
     p1.gold_income(5)
     assert p1.gold == 21, f"Interest calculation is messy, gold should be 21, it is {p1.gold}"
 
-
-def incomeTest2():
+# Problem: Interest rate not capped <- unknown if problem persists
+def test_income_cap():
     """Check for income cap"""
-    p1 = setup()
+    p1 = create_player()
     p1.gold = 1000
     p1.gold_income(5)
     assert p1.gold == 1010, f"Interest calculation is messy, gold should be 1010, it is {p1.gold}"
 
 
-def incomeTest3():
+def test_win_streak_gold():
     """Checks win streak gold"""
-    p1 = setup()
+    p1 = create_player()
     p1.gold = 0
     p1.win_streak = 0
     p1.gold_income(5)
@@ -373,9 +372,9 @@ def incomeTest3():
     assert p1.gold == 8, f"Interest calculation is messy, gold should be 8, it is {p1.gold}"
 
 
-def incomeTest4():
+def test_loss_streak_gold():
     """Checks loss streak gold"""
-    p1 = setup()
+    p1 = create_player()
     p1.gold = 0
     p1.loss_streak = 0
     p1.gold_income(5)
@@ -404,36 +403,3 @@ def incomeTest4():
     p1.loss_streak = 500
     p1.gold_income(5)
     assert p1.gold == 8, f"Interest calculation is messy, gold should be 8, it is {p1.gold}"
-
-
-def test_list():
-    """tests all test cases"""
-    azir_test()
-    chosen_test()
-    end_of_turn_actions_test()
-
-    championDuplicatorTest()
-    magneticRemoverTest()
-    reforgerTest()
-
-    thiefsGloveCombatTest()
-    thiefsGlovesTest()
-
-    kaynTests()
-
-    level2Champion()
-    level3Champion()
-    levelChampFromField()
-
-    buyExp()
-    # spamExp()
-
-    # Problem: Interest gets calculated after base income is added
-    incomeTest1()
-    # Problem: Interest rate not capped
-    incomeTest2()
-    incomeTest3()
-    incomeTest4()
-
-    # I would like to go over move commands again before writing test code for that
-    pass
